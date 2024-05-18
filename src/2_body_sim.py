@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 import matplotlib.pyplot as plt
-from data.constants import G, M_SUN, M_EARTH, PER_EARTH, SEMIMAJOR_EARTH
+from data.constants import M_SUN, M_EARTH, PER_EARTH, SEMIMAJOR_EARTH
 from src.formulas import gravitational_force, acceleration, update_position, update_velocity, vis_visa
 from log import SimulationLogger
 
