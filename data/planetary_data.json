@@ -1,0 +1,20 @@
+{
+  "constants" : {
+    "G" : 6.6743e-11
+  },
+  "sun" : {
+    "mass" : 1.989e30
+  },
+  "earth" : {
+    "mass" : 5.9722e24,
+    "perihelion" : 1.4709e8,
+    "aphelion" : 1.521e8,
+    "orbital_period" : 4333
+  },
+  "jupiter" : {
+    "mass" : 1.898e27,
+    "perihelion" : 7.4059e8,
+    "aphelion" : 8.1636e8,
+    "orbital_period" : 365
+  }
+}
