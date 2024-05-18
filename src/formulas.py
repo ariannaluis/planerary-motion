@@ -17,7 +17,7 @@ def gravitational_force(m1, m2, r1, r2):
     distance = np.linalg.norm(r)    # magnitude of displacement vector
 
     force_magnitude = (G * m1 * m2) / (distance ** 2)   # magnitude of gravitational force
-    force = force_magnitude * r     # directional force vector
+    force = force_magnitude * r / distance              # directional force vector
 
     return force
 
@@ -58,3 +58,16 @@ def update_velocity(velocity, accel, dt):
     :return: new_velocity (numpy array) : updated velocity vector (m/s)
     """
     return velocity + accel * dt        # new velocity = velocity + acceleration * dt
+
+
+def vis_visa(M, r, a):
+    """
+    Calculate orbital speed using the vis-viva equation.
+
+    :param M: (float) mass of central body (kg)
+    :param r: (float) distance from central body (m)
+    :param a: (float) semi-major axis of orbit (m)
+
+    :return: v (float) : orbital speed at distance r (m/s)
+    """
+    return np.sqrt(G * M * (2/r - 1/a))
