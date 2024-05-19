@@ -19,13 +19,20 @@ def simulate_two_body(masses, initial_conditions, t_span, dt):
     :return:                    (tuple) times and positions of the celestial bodies
     """
     def wrapper(t, y):
-        return differential_equations(t, y, masses)
+        result = differential_equations(t, y, masses)
+        print(f"Wrapper call at time {t}: {result}")
+        return result
 
     # times at which to store results
     t_eval = np.arange(t_span[0], t_span[1], dt)
+    print(f"t_eval size: {len(t_eval)}")
+    print(f"t_eval range: {t_eval[:5]} ... {t_eval[-5:]}")
 
     # solve differential equations using solve_ivp
-    sol = solve_ivp(wrapper, t_span, initial_conditions, t_eval=t_eval, method='RK45', rtol=1e-8, atol=1e-8)
+    sol = solve_ivp(wrapper, t_span, initial_conditions, t_eval=t_eval, method='RK45', rtol=1e-6, atol=1e-6)
+    print(f"Solver success: {sol.success}")
+    if not sol.success:
+        print(f"Solver failed: {sol.message}")
 
     # extract positions from solution
     positions = sol.y
@@ -44,13 +51,20 @@ def simulate_three_body(masses, initial_conditions, t_span, dt):
     :return:                    (tuple) times and positions of the celestial bodies
     """
     def wrapper(t, y):
-        return differential_equations(t, y, masses)
+        result = differential_equations(t, y, masses)
+        print(f"Wrapper call at time {t}: {result}")
+        return result
 
     # times at which to store results
     t_eval = np.arange(t_span[0], t_span[1], dt)
+    print(f"t_eval size: {len(t_eval)}")
+    print(f"t_eval range: {t_eval[:5]} ... {t_eval[-5:]}")
 
     # solve differential equations using solve_ivp
     sol = solve_ivp(wrapper, t_span, initial_conditions, t_eval=t_eval, method='RK45', rtol=1e-8, atol=1e-8)
+    print(f"Solver success: {sol.success}")
+    if not sol.success:
+        print(f"Solver failed: {sol.message}")
 
     positions = sol.y
 
