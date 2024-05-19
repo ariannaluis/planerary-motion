@@ -72,14 +72,17 @@ def main():
     initial_conditions_two_body = [x_planet, y_planet,
                                    vx_planet, vy_planet,
                                    0, 0, 0, 0]
-    t_span_two_body = (0, 86400 * 10)
-    dt = 3600
 
+    t_span_two_body = (0, period / 1e6)
+    dt = 3600  # 1 hour time step
+
+    # simulate two-body system
     print(f"Starting simulation for two-body problem with t_span={t_span_two_body} and dt={dt}")
     try:
         times, positions = simulate_two_body([mass_planet, mass_sun],
                                              initial_conditions_two_body,
-                                             t_span_two_body, dt)
+                                             t_span_two_body, dt,
+                                             method='LSODA', rtol=1e-5, atol=1e-8)
         print("Two-body simulation complete.")
     except Exception as e:
         print(f"Error during two-body simulation: {e}")
@@ -121,15 +124,15 @@ def main():
         x_jupiter, y_jupiter, vx_jupiter, vy_jupiter,
         x_sun, y_sun, vx_sun, vy_sun
     ]
-    t_span_three_body = (0, 86400 * 10)
-    dt = 3600
+    t_span_three_body = (0, period / 1e6)
 
     # simulate three-body system (sun, terrestrial planet, and jupiter)
     print(f"Starting simulation for three-body problem with t_span={t_span_three_body} and dt={dt}")
     try:
         times, positions = simulate_three_body([mass_planet, mass_jupiter, mass_sun],
                                                initial_conditions_three_body,
-                                               t_span_three_body, dt)
+                                               t_span_three_body, dt,
+                                               method='LSODA', rtol=1e-5, atol=1e-8)
         print("Three-body simulation complete.")
     except Exception as e:
         print(f"Error during three-body simulation: {e}")
