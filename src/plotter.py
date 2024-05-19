@@ -28,7 +28,7 @@ def plot_positions(times, positions, labels, title):
     plt.grid(True)
 
     # display the plot
-    plt.show()
+    # plt.show()
 
 
 def plot_orbits(positions, labels, title):
@@ -54,4 +54,13 @@ def plot_orbits(positions, labels, title):
     plt.gca().set_aspect('equal', adjustable='box')
 
     # display the plot
-    plt.show()
+    # plt.show()
+
+
+def save_plot(file_path):
+    """
+    Save the current plot to a file
+    :param file_path: (str) path to save the plot file
+    """
+    plt.savefig(file_path)
+    plt.close()
