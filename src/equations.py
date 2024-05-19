@@ -16,49 +16,36 @@ def gravitational_force(m1, m2, r):
     :param r:   (array) distance vector between the two bodies
     :return:    (array) gravitational force vector
     """
-    return G * m1 * m2 / np.linalg.norm(r) ** 3 * r
+    force = G * m1 * m2 / np.linalg.norm(r) ** 3 * r
+    print(f"Gravitational force: {force} for r: {r}")
+    return force
 
 
-def differential_equations(t, state, masses):
+def differential_equations(t, y, masses):
     """
     Define differential equations for the motion of bodies
-    :param t:       (float) time
-    :param state:   (array) state vector containing positions and velocities
+    :param t:       (float) current time
+    :param y:       (array) current state vector containing positions and velocities
     :param masses:  (list)  list of masses of the bodies
     :return:        (list)  derivatives of the state vector
     """
-    # two-body case
-    if len(masses) == 2:
-        # unpack state vector
-        x1, y1, vx1, vy1, x2, y2, vx2, vy2 = state
-        m1, m2 = masses
+    n = len(masses)
+    dydt = np.zeros_like(y)
+    positions = y[:2*n].reshape((n, 2))
+    velocities = y[2*n:].reshape((n, 2))
 
-        # compute distance vector between the two bodies
-        r12 = np.array([x2 - x1, y2 - y1])
+    dydt[:2*n] = velocities.flatten()
 
-        # compute accelerations due to gravitational forces
-        a1 = gravitational_force(m2, m1, -r12) / m1
-        a2 = gravitational_force(m1, m2, r12) / m2
+    for i in range(n):
+        acc = np.zeros(2)
+        for j in range(n):
+            if i != j:
+                r_ij = positions[j] - positions[i]
+                distance = np.linalg.norm(r_ij)
+                acc += G * masses[j] * r_ij / distance**3
+        dydt[2*n + 2*i:2*n + 2*i + 2] = acc
 
-        return [vx1, vy1, *a1, vx2, vy2, *a2]
-
-    # three-body case
-    elif len(masses) == 3:
-        # unpack state vector
-        x1, y1, vx1, vy1, x2, y2, vx2, vy2, x3, y3, vx3, vy3 = state
-        m1, m2, m3 = masses
-
-        # compute distance vectors between the bodies
-        r12 = np.array([x2 - x1, y2 - y1])
-        r13 = np.array([x3 - x1, y3 - y1])
-        r23 = np.array([x3 - x2, y3 - y2])
-
-        # compute accelerations due to gravitational forces
-        a1 = gravitational_force(m2, m1, -r12) / m1 + gravitational_force(m3, m1, -r13) / m1
-        a2 = gravitational_force(m1, m2, r12) / m2 + gravitational_force(m3, m2, -r23) / m2
-        a3 = gravitational_force(m1, m3, r13) / m3 + gravitational_force(m2, m3, r23) / m3
-
-        return [vx1, vy1, *a1, vx2, vy2, *a2, vx3, vy3, *a3]
+    return dydt
 
 
 def difference_equations(state, masses, dt):
