@@ -42,6 +42,10 @@ def main():
     masses = load_masses()
     orbital_params = load_orbital_params()
 
+    if masses is None or orbital_params is None:
+        print("Failed to load masses or orbital parameters. Exiting.")
+        return
+
     # choose terrestrial planet and get relevant data
     planet = "earth"
     mass_sun = masses["sun"]
@@ -50,9 +54,8 @@ def main():
 
     # get parameters for planet
     perihelion = orbital_params[planet]["perihelion"] * 1e3
-    aphelion = orbital_params[planet]["aphelion"] * 1e3
-    period = orbital_params[planet]["period"]
     semi_major_axis = orbital_params[planet]["semi_major_axis"] * 1e3
+    period = orbital_params[planet]["period"] * 365.25 * 24 * 3600
 
     # initial conditions at perihelion for two-body system
     x_planet = perihelion
@@ -69,13 +72,18 @@ def main():
     initial_conditions_two_body = [x_planet, y_planet,
                                    vx_planet, vy_planet,
                                    0, 0, 0, 0]
-    t_span_two_body = (0, 3 * period)  # simulate for 3 years
-    dt = 60 * 60  # 1 hour time step
+    t_span_two_body = (0, 86400 * 10)
+    dt = 3600
 
-    # simulate two-body system (sun and terrestrial planet)
-    times, positions = simulate_two_body([mass_planet, mass_sun],
-                                         initial_conditions_two_body,
-                                         t_span_two_body, dt)
+    print(f"Starting simulation for two-body problem with t_span={t_span_two_body} and dt={dt}")
+    try:
+        times, positions = simulate_two_body([mass_planet, mass_sun],
+                                             initial_conditions_two_body,
+                                             t_span_two_body, dt)
+        print("Two-body simulation complete.")
+    except Exception as e:
+        print(f"Error during two-body simulation: {e}")
+        return
 
     # save data for two-body system
     save_data('results/data/two_body.json', times, positions)
@@ -90,10 +98,13 @@ def main():
 
     # initial conditions at perihelion for three-body system
     semi_major_axis_jupiter = orbital_params["jupiter"]["semi_major_axis"] * 1e3
-    x_jupiter = orbital_params["jupiter"]["perihelion"] * 1e3
+    perihelion_jupiter = orbital_params["jupiter"]["perihelion"] * 1e3
+    period_jupiter = orbital_params["jupiter"]["period"] * 365.25 * 24 * 3600
+
+    x_jupiter = perihelion_jupiter
     y_jupiter = 0
     vx_jupiter = 0
-    vy_jupiter = np.sqrt(G * mass_sun * (2 / x_jupiter - 1 / semi_major_axis_jupiter))
+    vy_jupiter = np.sqrt(G * mass_sun * (2 / perihelion_jupiter - 1 / semi_major_axis_jupiter))
 
     # debug: print initial conditions for three-body system
     print(f"Initial conditions for three-body problem: x_jupiter={x_jupiter}, "
@@ -110,12 +121,19 @@ def main():
         x_jupiter, y_jupiter, vx_jupiter, vy_jupiter,
         x_sun, y_sun, vx_sun, vy_sun
     ]
-    t_span_three_body = (0, 36 * period)
+    t_span_three_body = (0, 86400 * 10)
+    dt = 3600
 
     # simulate three-body system (sun, terrestrial planet, and jupiter)
-    times, positions = simulate_three_body([mass_planet, mass_jupiter, mass_sun],
-                                           initial_conditions_three_body,
-                                           t_span_three_body, dt)
+    print(f"Starting simulation for three-body problem with t_span={t_span_three_body} and dt={dt}")
+    try:
+        times, positions = simulate_three_body([mass_planet, mass_jupiter, mass_sun],
+                                               initial_conditions_three_body,
+                                               t_span_three_body, dt)
+        print("Three-body simulation complete.")
+    except Exception as e:
+        print(f"Error during three-body simulation: {e}")
+        return
 
     # save data for three-body system
     save_data('results/data/three_body.json', times, positions)
