@@ -31,19 +31,25 @@ def differential_equations(t, y, masses):
     """
     n = len(masses)
     dydt = np.zeros_like(y)
-    positions = y[:2*n].reshape((n, 2))
-    velocities = y[2*n:].reshape((n, 2))
-
-    dydt[:2*n] = velocities.flatten()
 
     for i in range(n):
-        acc = np.zeros(2)
+        x_i, y_i, vx_i, vy_i = y[4 * i:4 * i + 4]
+        ax_i, ay_i = 0, 0
+
         for j in range(n):
             if i != j:
-                r_ij = positions[j] - positions[i]
-                distance = np.linalg.norm(r_ij)
-                acc += G * masses[j] * r_ij / distance**3
-        dydt[2*n + 2*i:2*n + 2*i + 2] = acc
+                x_j, y_j, vx_j, vy_j = y[4 * j:4 * j + 4]
+                dx = x_j - x_i
+                dy = y_j - y_i
+                r = np.sqrt(dx**2 + dy**2)
+                a = G * masses[j] / r**2
+                ax_i += a * dx / r
+                ay_i += a * dy / r
+
+        dydt[4 * i] = vx_i
+        dydt[4 * i + 1] = vy_i
+        dydt[4 * i + 2] = ax_i
+        dydt[4 * i + 3] = ay_i
 
     return dydt
 
