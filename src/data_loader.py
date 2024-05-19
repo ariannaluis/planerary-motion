@@ -2,18 +2,27 @@
 Functions to load masses and orbital parameters from JSON files.
 """
 
+import os
 import json
 
 
-def load_masses(file_path="data/masses.json"):
+def load_masses():
     """
     Load masses of bodies from a JSON file
-    :param      file_path: (str) path to the JSON file that contains the masses
     :return:    (dict) dictionary containing the masses of the sun, the planet,
                 and Jupiter
     """
-    with open(file_path, "r") as file:
-        return json.load(file)
+    file_path = os.path.join(os.path.dirname(__file__), '../data/masses.json')
+
+    try:
+        with open(file_path, "r") as file:
+            data = ""
+            for chunk in iter(lambda: file.read(4096), ""):
+                data += chunk
+            return json.loads(data)
+    except Exception as e:
+        print(f"Error loading masses: {e}")
+        return None
 
 
 def load_orbital_params(file_path="data/orbital_params.json"):
@@ -24,5 +33,14 @@ def load_orbital_params(file_path="data/orbital_params.json"):
     :return:    (dict) dictionary containing the orbital parameters for the planet
                 and Jupiter
     """
-    with open(file_path, "r") as file:
-        return json.load(file)
+    file_path = os.path.join(os.path.dirname(__file__), '../data/orbital_params.json')
+
+    try:
+        with open(file_path, "r") as file:
+            data = ""
+            for chunk in iter(lambda: file.read(4096), ""):
+                data += chunk
+            return json.loads(data)
+    except Exception as e:
+        print(f"Error loading orbital parameters: {e}")
+        return None
