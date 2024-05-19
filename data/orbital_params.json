@@ -2,11 +2,13 @@
   "earth": {
     "perihelion": 1.4709e8,
     "aphelion" : 1.5210e8,
-    "period" : 31558118.4
+    "period" : 31558118.4,
+    "semi_major_axis" : 1.4959e8
   },
   "jupiter" : {
     "perihelion": 7.4059e8,
     "aphelion" : 8.1636e8,
-    "period" : 374335689.6
+    "period" : 374335689.6,
+    "semi_major_axis" : 7.7848e8
   }
 }
