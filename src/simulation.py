@@ -5,7 +5,7 @@ methods.
 
 import numpy as np
 from scipy.integrate import solve_ivp
-from .equations import differential_equations, difference_equations
+from src.equations import differential_equations, difference_equations
 
 
 def simulate_two_body(masses, initial_conditions, t_span, dt):
@@ -18,15 +18,19 @@ def simulate_two_body(masses, initial_conditions, t_span, dt):
     :param dt:                  (float) time step for the simulation
     :return:                    (tuple) times and positions of the celestial bodies
     """
+    def wrapper(t, y):
+        return differential_equations(t, y, masses)
+
     # times at which to store results
     t_eval = np.arange(t_span[0], t_span[1], dt)
 
     # solve differential equations using solve_ivp
-    solution = solve_ivp(
-        differential_equations, t_span, initial_conditions, args=(masses,), t_eval=t_eval, method='RK45'
-    )
+    sol = solve_ivp(wrapper, t_span, initial_conditions, t_eval=t_eval, method='RK45', rtol=1e-8, atol=1e-8)
 
-    return solution.t, solution.y
+    # extract positions from solution
+    positions = sol.y
+
+    return sol.t, positions
 
 
 def simulate_three_body(masses, initial_conditions, t_span, dt):
@@ -39,36 +43,15 @@ def simulate_three_body(masses, initial_conditions, t_span, dt):
     :param dt:                  (float) time step for the simulation
     :return:                    (tuple) times and positions of the celestial bodies
     """
+    def wrapper(t, y):
+        return differential_equations(t, y, masses)
+
     # times at which to store results
     t_eval = np.arange(t_span[0], t_span[1], dt)
 
     # solve differential equations using solve_ivp
-    solution = solve_ivp(
-        differential_equations, t_span, initial_conditions, args=(masses,), t_eval=t_eval, method='RK45'
-    )
+    sol = solve_ivp(wrapper, t_span, initial_conditions, t_eval=t_eval, method='RK45', rtol=1e-8, atol=1e-8)
 
-    return solution.t, solution.y
+    positions = sol.y
 
-
-def run_difference_simulation(masses, initial_conditions, t_span, dt):
-    """
-    Simulate the motion of bodies using difference equations
-    :param masses:              (list)  list of masses of the bodies
-    :param initial_conditions:  (list)  initial state vector
-    :param t_span:              (tuple) time span for the simulation (start, end)
-    :param dt:                  (float) time step for the simulation
-    :return:                    (array) trajectory of the bodies
-    """
-    # calculate number of steps
-    num_steps = int((t_span[1] - t_span[0]) / dt)
-    state = initial_conditions
-
-    # initialize array to store trajectory
-    trajectory = np.zeros((num_steps, len(state)))
-
-    # iterate through time steps
-    for step in range(num_steps):
-        trajectory[step] = state
-        state = difference_equations(state, masses, dt)
-
-    return trajectory
+    return sol.t, positions
