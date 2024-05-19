@@ -60,13 +60,17 @@ def main():
     vx_planet = 0
     vy_planet = np.sqrt(G * mass_sun * (2 / perihelion - 1 / semi_major_axis))
 
+    # debug: print initial conditions for two-body problem
+    print(f"Initial conditions for two-body problem: x_planet={x_planet}, "
+          f"y_planet={y_planet}, vx_planet={vx_planet}, vy_planet={vy_planet}")
+
     # initial state vector for two-body system
     # [x1, y1, vx1, vy1, x2, y2, vx2, vy2]
     initial_conditions_two_body = [x_planet, y_planet,
                                    vx_planet, vy_planet,
                                    0, 0, 0, 0]
-    t_span_two_body = (0, 3 * period)   # simulate for 3 years
-    dt = 60 * 60                        # 1 hour time step
+    t_span_two_body = (0, 3 * period)  # simulate for 3 years
+    dt = 60 * 60  # 1 hour time step
 
     # simulate two-body system (sun and terrestrial planet)
     times, positions = simulate_two_body([mass_planet, mass_sun],
@@ -90,6 +94,10 @@ def main():
     y_jupiter = 0
     vx_jupiter = 0
     vy_jupiter = np.sqrt(G * mass_sun * (2 / x_jupiter - 1 / semi_major_axis_jupiter))
+
+    # debug: print initial conditions for three-body system
+    print(f"Initial conditions for three-body problem: x_jupiter={x_jupiter}, "
+          f"y_jupiter={y_jupiter}, vx_jupiter={vx_jupiter}, vy_jupiter={vy_jupiter}")
 
     # sun's initial conditions (assuming stationary sun)
     x_sun, y_sun = 0, 0
