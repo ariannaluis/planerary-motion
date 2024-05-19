@@ -1,8 +1,11 @@
-def load_masses():
-    # load masses from masses.json
-    return
+import json
 
 
-def load_orbital_params():
-    # load orbital parameters from orbital_params.json
-    return
+def load_masses(file_path="data/masses.json"):
+    with open(file_path, "r") as file:
+        return json.load(file)
+
+
+def load_orbital_params(file_path="data/orbital_params.json"):
+    with open(file_path, "r") as file:
+        return json.load(file)

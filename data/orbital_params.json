@@ -1,12 +1,12 @@
 {
   "earth": {
-    "perihelion": "1.4709e8",
-    "aphelion" : "1.5210e8",
-    "period" : "365.256 * 24 * 3600"
+    "perihelion": 1.4709e8,
+    "aphelion" : 1.5210e8,
+    "period" : 31558118.4
   },
   "jupiter" : {
-    "perihelion": "7.4059e8",
-    "aphelion" : "8.1636e8",
-    "period" : "4332.589 * 24 * 3600"
+    "perihelion": 7.4059e8,
+    "aphelion" : 8.1636e8,
+    "period" : 374335689.6
   }
 }
