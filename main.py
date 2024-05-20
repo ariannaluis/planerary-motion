@@ -8,6 +8,8 @@ these celestial bodies.
 import os
 import json
 import numpy as np
+import cProfile
+import pstats
 from src.data_loader import load_masses, load_orbital_params
 from src.simulation import simulate_two_body, simulate_three_body
 from src.plotter import plot_positions, plot_orbits, save_plot
@@ -73,17 +75,22 @@ def main():
                                    vx_planet, vy_planet,
                                    0, 0, 0, 0]
 
-    t_span_two_body = (0, period / 1e6)
-    dt = 3600  # 1 hour time step
+    t_span_two_body = (0, period * 0.01)
+    dt = 86400 * 60  # 2 month time step
 
     # simulate two-body system
     print(f"Starting simulation for two-body problem with t_span={t_span_two_body} and dt={dt}")
     try:
+        profiler = cProfile.Profile()
+        profiler.enable()
         times, positions = simulate_two_body([mass_planet, mass_sun],
                                              initial_conditions_two_body,
                                              t_span_two_body, dt,
                                              method='LSODA', rtol=1e-5, atol=1e-8)
+        profiler.disable()
         print("Two-body simulation complete.")
+        stats = pstats.Stats(profiler)
+        stats.sort_stats('cumulative').print_stats(20)
     except Exception as e:
         print(f"Error during two-body simulation: {e}")
         return
@@ -124,16 +131,23 @@ def main():
         x_jupiter, y_jupiter, vx_jupiter, vy_jupiter,
         x_sun, y_sun, vx_sun, vy_sun
     ]
-    t_span_three_body = (0, period / 1e6)
+
+    t_span_three_body = (0, period_jupiter * 0.0001)
+    dt_three_body = 2592000 * 12  # 12 month time step
 
     # simulate three-body system (sun, terrestrial planet, and jupiter)
     print(f"Starting simulation for three-body problem with t_span={t_span_three_body} and dt={dt}")
     try:
+        profiler = cProfile.Profile()
+        profiler.enable()
         times, positions = simulate_three_body([mass_planet, mass_jupiter, mass_sun],
                                                initial_conditions_three_body,
-                                               t_span_three_body, dt,
+                                               t_span_three_body, dt_three_body,
                                                method='LSODA', rtol=1e-5, atol=1e-8)
+        profiler.disable()
         print("Three-body simulation complete.")
+        stats = pstats.Stats(profiler)
+        stats.sort_stats('cumulative').print_stats(20)
     except Exception as e:
         print(f"Error during three-body simulation: {e}")
         return
@@ -154,3 +168,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
