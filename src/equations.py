@@ -2,11 +2,26 @@
 Functions to compute gravitational forces and differential equations for the motion
 of celestial bodies.
 """
+
 import cProfile
 import numpy as np
+from functools import lru_cache
 from line_profiler import profile
 
 G = 6.67430e-11  # gravitational constant
+
+
+def arr_to_tuple(arr):
+    return tuple(arr)
+
+
+@profile
+@lru_cache(maxsize=None)
+def cached_gravitational_force(m1, m2, r_tuple):
+    r = np.array(r_tuple)
+    norm_r = np.linalg.norm(r)
+    force = G * m1 * m2 / norm_r ** 3 * r
+    return force
 
 
 @profile
@@ -18,9 +33,8 @@ def gravitational_force(m1, m2, r):
     :param r:   (array) distance vector between the two bodies
     :return:    (array) gravitational force vector
     """
-    force = G * m1 * m2 / np.linalg.norm(r) ** 3 * r
-    print(f"Gravitational force: {force} for r: {r}")
-    return force
+    r_tuple = arr_to_tuple(r)
+    return cached_gravitational_force(m1, m2, r_tuple)
 
 
 @profile
@@ -41,39 +55,18 @@ def differential_equations(t, y, masses):
 
     dx = positions[:, 0].reshape(n, 1) - positions[:, 0]
     dy = positions[:, 1].reshape(n, 1) - positions[:, 1]
-    dist3 = (dx ** 2 + dy ** 2) ** 1.5
+    dist_squared = dx ** 2 + dy ** 2
+    dist_cubed = dist_squared ** 1.5
 
-    np.fill_diagonal(dist3, np.inf)
+    np.fill_diagonal(dist_cubed, np.inf)
 
-    ax = G * np.sum(dx * masses / dist3, axis=1)
-    ay = G * np.sum(dy * masses / dist3, axis=1)
+    ax = G * np.sum(dx * masses / dist_cubed, axis=1)
+    ay = G * np.sum(dy * masses / dist_cubed, axis=1)
 
     dydt[2 * n:2 * n + 2 * n:2] = ax
     dydt[2 * n + 1:2 * n + 2 * n:2] = ay
 
     return dydt
-
-
-"""
-    for i in range(n):
-        x_i, y_i, vx_i, vy_i = y[4 * i:4 * i + 4]
-        ax_i, ay_i = 0, 0
-
-        for j in range(n):
-            if i != j:
-                x_j, y_j, vx_j, vy_j = y[4 * j:4 * j + 4]
-                dx = x_j - x_i
-                dy = y_j - y_i
-                r = np.sqrt(dx**2 + dy**2)
-                a = G * masses[j] / r**2
-                ax_i += a * dx / r
-                ay_i += a * dy / r
-
-        dydt[4 * i] = vx_i
-        dydt[4 * i + 1] = vy_i
-        dydt[4 * i + 2] = ax_i
-        dydt[4 * i + 3] = ay_i
-"""
 
 
 @profile
