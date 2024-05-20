@@ -2,12 +2,14 @@
 Functions to compute gravitational forces and differential equations for the motion
 of celestial bodies.
 """
-
+import cProfile
 import numpy as np
+from line_profiler import profile
 
 G = 6.67430e-11  # gravitational constant
 
 
+@profile
 def gravitational_force(m1, m2, r):
     """
     Compute the gravitational force between two masses
@@ -21,6 +23,7 @@ def gravitational_force(m1, m2, r):
     return force
 
 
+@profile
 def differential_equations(t, y, masses):
     """
     Define differential equations for the motion of bodies
@@ -30,8 +33,28 @@ def differential_equations(t, y, masses):
     :return:        (list)  derivatives of the state vector
     """
     n = len(masses)
-    dydt = np.zeros_like(y)
+    positions = y[:2 * n].reshape((n, 2))
+    velocities = y[2 * n:].reshape((n, 2))
 
+    dydt = np.zeros_like(y)
+    dydt[:2 * n] = velocities.flatten()
+
+    dx = positions[:, 0].reshape(n, 1) - positions[:, 0]
+    dy = positions[:, 1].reshape(n, 1) - positions[:, 1]
+    dist3 = (dx ** 2 + dy ** 2) ** 1.5
+
+    np.fill_diagonal(dist3, np.inf)
+
+    ax = G * np.sum(dx * masses / dist3, axis=1)
+    ay = G * np.sum(dy * masses / dist3, axis=1)
+
+    dydt[2 * n:2 * n + 2 * n:2] = ax
+    dydt[2 * n + 1:2 * n + 2 * n:2] = ay
+
+    return dydt
+
+
+"""
     for i in range(n):
         x_i, y_i, vx_i, vy_i = y[4 * i:4 * i + 4]
         ax_i, ay_i = 0, 0
@@ -50,10 +73,10 @@ def differential_equations(t, y, masses):
         dydt[4 * i + 1] = vy_i
         dydt[4 * i + 2] = ax_i
         dydt[4 * i + 3] = ay_i
+"""
 
-    return dydt
 
-
+@profile
 def difference_equations(state, masses, dt):
     """
     Define difference equations for the motion of celestial bodies
