@@ -3,9 +3,10 @@ Functions to run simulations of celestial bodies' motion using numerical integra
 methods.
 """
 
+import cProfile
 import numpy as np
 from scipy.integrate import solve_ivp
-from src.equations import differential_equations, difference_equations
+from src.equations import differential_equations, gravitational_force
 
 
 def simulate_two_body(masses, initial_conditions, t_span, dt,
@@ -23,7 +24,6 @@ def simulate_two_body(masses, initial_conditions, t_span, dt,
     :return:                    (tuple) times and positions of the celestial bodies
     """
     def wrapper(t, y):
-        print(f"Wrapper call at time {t}: y={y}")
         return differential_equations(t, y, masses)
 
     # times at which to store results
@@ -39,7 +39,7 @@ def simulate_two_body(masses, initial_conditions, t_span, dt,
 
 
 def simulate_three_body(masses, initial_conditions, t_span, dt,
-                        method='RK45', rtol=1e-8, atol=1e-8):
+                        method='RK45', rtol=1e-5, atol=1e-8):
     """
     Simulate the motion of a three-body system
     :param masses:              (list)  list of masses of the bodies
@@ -53,7 +53,6 @@ def simulate_three_body(masses, initial_conditions, t_span, dt,
     :return:                    (tuple) times and positions of the celestial bodies
     """
     def wrapper(t, y):
-        print(f"Wrapper call at time {t}: y={y}")
         return differential_equations(t, y, masses)
 
     # times at which to store results
@@ -61,7 +60,7 @@ def simulate_three_body(masses, initial_conditions, t_span, dt,
 
     # solve differential equations using solve_ivp
     sol = solve_ivp(wrapper, t_span, initial_conditions,
-                    t_eval=t_eval, method=method, rtol=rtol, atol=1e-8)
+                    t_eval=t_eval, method=method, rtol=rtol, atol=atol)
 
     positions = sol.y
     return sol.t, positions
