@@ -6,7 +6,6 @@ of celestial bodies.
 import cProfile
 import numpy as np
 from functools import lru_cache
-from line_profiler import profile
 
 G = 6.67430e-11  # gravitational constant
 
@@ -15,7 +14,6 @@ def arr_to_tuple(arr):
     return tuple(arr)
 
 
-@profile
 @lru_cache(maxsize=None)
 def cached_gravitational_force(m1, m2, r_tuple):
     r = np.array(r_tuple)
@@ -24,7 +22,6 @@ def cached_gravitational_force(m1, m2, r_tuple):
     return force
 
 
-@profile
 def gravitational_force(m1, m2, r):
     """
     Compute the gravitational force between two masses
@@ -37,7 +34,6 @@ def gravitational_force(m1, m2, r):
     return cached_gravitational_force(m1, m2, r_tuple)
 
 
-@profile
 def differential_equations(t, y, masses):
     """
     Define differential equations for the motion of bodies
@@ -69,7 +65,6 @@ def differential_equations(t, y, masses):
     return dydt
 
 
-@profile
 def difference_equations(state, masses, dt):
     """
     Define difference equations for the motion of celestial bodies
