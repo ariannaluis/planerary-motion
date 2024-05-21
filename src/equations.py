@@ -5,21 +5,8 @@ of celestial bodies.
 
 import cProfile
 import numpy as np
-from functools import lru_cache
 
 G = 6.67430e-11  # gravitational constant
-
-
-def arr_to_tuple(arr):
-    return tuple(arr)
-
-
-@lru_cache(maxsize=None)
-def cached_gravitational_force(m1, m2, r_tuple):
-    r = np.array(r_tuple)
-    norm_r = np.linalg.norm(r)
-    force = G * m1 * m2 / norm_r ** 3 * r
-    return force
 
 
 def gravitational_force(m1, m2, r):
@@ -30,8 +17,9 @@ def gravitational_force(m1, m2, r):
     :param r:   (array) distance vector between the two bodies
     :return:    (array) gravitational force vector
     """
-    r_tuple = arr_to_tuple(r)
-    return cached_gravitational_force(m1, m2, r_tuple)
+    force = G * m1 * m2 / np.linalg.norm(r) ** 3 * r
+    print(f"Gravitational force: {force} for r: {r}")
+    return force
 
 
 def differential_equations(t, y, masses):
