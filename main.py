@@ -24,10 +24,12 @@ def save_data(file_path, times, positions):
     :param times:       (array) array of time points
     :param positions:   (array) array of positions for the bodies
     """
+    # setup formatting
     data = {
         'times': times.tolist(),
         'positions': [pos.tolist() for pos in positions]
     }
+    # write to JSON file
     with open(file_path, 'w') as f:
         json.dump(data, f)
 
@@ -57,7 +59,7 @@ def main():
     # get parameters for planet
     perihelion = orbital_params[planet]["perihelion"] * 1e3
     semi_major_axis = orbital_params[planet]["semi_major_axis"] * 1e3
-    period = orbital_params[planet]["period"] * 365.25 * 24 * 3600
+    period = orbital_params[planet]["period"]
 
     # initial conditions at perihelion for two-body system
     x_planet = perihelion
@@ -75,8 +77,8 @@ def main():
                                    vx_planet, vy_planet,
                                    0, 0, 0, 0]
 
-    t_span_two_body = (0, period * 0.01)
-    dt = 86400 * 60  # 2 month time step
+    t_span_two_body = (0, period)    #1/10th of year
+    dt = 86400  # one day
 
     # simulate two-body system
     print(f"Starting simulation for two-body problem with t_span={t_span_two_body} and dt={dt}")
@@ -109,7 +111,7 @@ def main():
     # initial conditions at perihelion for three-body system
     semi_major_axis_jupiter = orbital_params["jupiter"]["semi_major_axis"] * 1e3
     perihelion_jupiter = orbital_params["jupiter"]["perihelion"] * 1e3
-    period_jupiter = orbital_params["jupiter"]["period"] * 365.25 * 24 * 3600
+    period_jupiter = orbital_params["jupiter"]["period"]
 
     x_jupiter = perihelion_jupiter
     y_jupiter = 0
@@ -132,8 +134,8 @@ def main():
         x_sun, y_sun, vx_sun, vy_sun
     ]
 
-    t_span_three_body = (0, period_jupiter * 0.0001)
-    dt_three_body = 2592000 * 12  # 12 month time step
+    t_span_three_body = (0, period_jupiter)
+    dt_three_body = 86400 * 7   # one week
 
     # simulate three-body system (sun, terrestrial planet, and jupiter)
     print(f"Starting simulation for three-body problem with t_span={t_span_three_body} and dt={dt}")
