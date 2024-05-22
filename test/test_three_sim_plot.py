@@ -16,7 +16,7 @@ y_jupiter = 0.0  # initial position in y, meters
 vx_jupiter = 0.0  # initial velocity in x, meters/second
 vy_jupiter = 13070.0  # initial velocity in y, meters/second
 
-t_span = 31558118.4 * 11.86  # 11.86 years in seconds (one Jupiter year)
+t_span = 31558118.4 * 11.86  # 11.86 years in seconds (jupiter year)
 dt = 86400  # one day in seconds
 n_steps = int(t_span / dt)
 
@@ -39,7 +39,7 @@ y_jupiter_current = y_jupiter
 
 # euler's method
 for i in range(n_steps):
-    # update earth
+    # update earth position and velocity
     r_earth = np.sqrt(x_earth_current**2 + y_earth_current**2)
     ax_earth = -G * m_sun * x_earth_current / r_earth**3
     ay_earth = -G * m_sun * y_earth_current / r_earth**3
@@ -50,7 +50,7 @@ for i in range(n_steps):
     x_positions_earth[i] = x_earth_current
     y_positions_earth[i] = y_earth_current
 
-    # update jupiter's position and velocity
+    # update jupiter position and velocity
     r_jupiter = np.sqrt(x_jupiter_current**2 + y_jupiter_current**2)
     ax_jupiter = -G * m_sun * x_jupiter_current / r_jupiter**3
     ay_jupiter = -G * m_sun * y_jupiter_current / r_jupiter**3
@@ -81,7 +81,7 @@ ax1.legend()
 # orbit trace
 ax2.plot(x_positions_earth, y_positions_earth, label='Earth')
 ax2.plot(x_positions_jupiter, y_positions_jupiter, label='Jupiter', linestyle='--')
-ax2.plot(0, 0, 'yo', label='Sun')  # Plotting the Sun at the origin
+ax2.plot(0, 0, 'yo', label='Sun')  # plotting sun at origin
 ax2.set_xlabel('X Position (m)')
 ax2.set_ylabel('Y Position (m)')
 ax2.legend()
