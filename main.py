@@ -1,10 +1,3 @@
-"""
-Simulates the motion of a terrestrial planet and Jupiter under the gravitational
-influence of the Sun.
-Uses numerical methods to solve the differential equations governing the motion of
-these celestial bodies.
-"""
-
 import os
 import json
 import numpy as np
@@ -18,12 +11,6 @@ G = 6.67430e-11  # gravitational constant
 
 
 def save_data(file_path, times, positions):
-    """
-    Save simulation data to a JSON file
-    :param file_path:   (str)   path to the JSON file
-    :param times:       (array) array of time points
-    :param positions:   (array) array of positions for the bodies
-    """
     # setup formatting
     data = {
         'times': times.tolist(),
@@ -73,7 +60,7 @@ def main():
 
     # initial state vector for two-body system
     initial_conditions_two_body = [x_planet, y_planet, vx_planet, vy_planet, 0, 0, 0, 0]
-    t_span_two_body = period    #1/10th of year
+    t_span_two_body = (0, period)    #1/10th of year
     dt = 86400  # one day
 
     # simulate two-body system
@@ -81,7 +68,7 @@ def main():
     try:
         profiler = cProfile.Profile()
         profiler.enable()
-        x_positions, y_positions = simulate_two_body(t_span_two_body, dt, initial_conditions_two_body, [mass_planet, mass_sun])
+        times, positions = simulate_two_body([mass_planet, mass_sun], initial_conditions_two_body, t_span_two_body, dt)
         profiler.disable()
         print("Two-body simulation complete.")
         stats = pstats.Stats(profiler)
@@ -90,15 +77,13 @@ def main():
         print(f"Error during two-body simulation: {e}")
         return
 
-    # save data for two-body system
-    times = np.linspace(0, t_span_two_body, len(x_positions))
-    save_data('results/data/two_body.json', times, [x_positions, y_positions])
+    save_data('results/data/two_body.json', times, positions)
 
     # plot results
-    plot_positions(times, [x_positions, y_positions], ["x_earth", "y_earth"],
+    plot_positions(times, [positions[0], positions[1]], ["x_earth", "y_earth"],
                    "Position vs Time (Two-Body System)")
     save_plot('results/plots/two_body_position_vs_time.png')
-    plot_orbits([[x_positions, y_positions]], ["Earth"],
+    plot_orbits([[positions[0], positions[1]], [0, 0]], ["Earth", "Sun"],
                 "Orbit Trace (Two-Body System)")
     save_plot('results/plots/two_body_orbit_trace.png')
 
@@ -126,17 +111,18 @@ def main():
         x_jupiter, y_jupiter, vx_jupiter, vy_jupiter,
         x_sun, y_sun, vx_sun, vy_sun
     ]
-    t_span_three_body = period_jupiter
-    dt_three_body = 86400 * 7   # one week
+
+    t_span_three_body = (0, period_jupiter)
+    dt_three_body = 86400 * 7  # one week
 
     # simulate three-body system (sun, terrestrial planet, and jupiter)
-    print(f"Starting simulation for three-body problem with t_span={t_span_three_body} and dt={dt_three_body}")
+    print(f"Starting simulation for three-body problem with t_span={t_span_three_body} and dt={dt}")
     try:
         profiler = cProfile.Profile()
         profiler.enable()
-        x_earth, y_earth, x_jupiter, y_jupiter, x_sun, y_sun = simulate_three_body(t_span_three_body, dt_three_body,
-                                                                                   initial_conditions_three_body,
-                                                                                   [mass_planet, mass_jupiter, mass_sun])
+        times, positions = simulate_three_body([mass_planet, mass_jupiter, mass_sun],
+                                               initial_conditions_three_body,
+                                               t_span_three_body, dt_three_body)
         profiler.disable()
         print("Three-body simulation complete.")
         stats = pstats.Stats(profiler)
@@ -146,15 +132,14 @@ def main():
         return
 
     # save data for three-body system
-    times_three_body = np.linspace(0, t_span_three_body, len(x_earth))
-    save_data('results/data/three_body.json', times_three_body, [x_earth, y_earth, x_jupiter, y_jupiter, x_sun, y_sun])
+    save_data('results/data/three_body.json', times, positions)
 
     # plot results
-    plot_positions(times_three_body, [x_earth, y_earth, x_jupiter, y_jupiter],
+    plot_positions(times, [positions[0], positions[1], positions[4], positions[5]],
                    ["x_earth", "y_earth", "x_jupiter", "y_jupiter"],
                    "Position vs Time (Three-Body System)")
     save_plot('results/plots/three_body_position_vs_time.png')
-    plot_orbits([[x_earth, y_earth], [x_jupiter, y_jupiter], [x_sun, y_sun]],
+    plot_orbits([[positions[0], positions[1]], [positions[4], positions[5]], [positions[8], positions[9]]],
                 ["Earth", "Jupiter", "Sun"],
                 "Orbit Traces (Three-Body System)")
     save_plot('results/plots/three_body_orbit_trace.png')

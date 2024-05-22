@@ -1,23 +1,20 @@
+import data.initial_vals as vals
 import numpy as np
 import matplotlib.pyplot as plt
 
-G = 6.67430e-11  # gravitational constant, m^3 kg^-1 s^-2
-m_sun = 1.989e30  # mass of the Sun, kg
-m_earth = 5.972e24  # mass of the Earth, kg
-m_jupiter = 1.898e27  # mass of Jupiter, kg
 
-x_earth = 147095000000.0  # initial position in x, meters
-y_earth = 0.0  # initial position in y, meters
-vx_earth = 0.0  # initial velocity in x, meters/second
-vy_earth = 30286.4027  # initial velocity in y, meters/second
+x_earth = 1.47095e11        # initial position in x, meters
+y_earth = 0.0               # initial position in y, meters
+vx_earth = 0.0              # initial velocity in x, meters/second
+vy_earth = 30286.4027       # initial velocity in y, meters/second
 
-x_jupiter = 778500000000.0  # initial position in x, meters
-y_jupiter = 0.0  # initial position in y, meters
-vx_jupiter = 0.0  # initial velocity in x, meters/second
-vy_jupiter = 13070.0  # initial velocity in y, meters/second
+x_jupiter = 7.785e11        # initial position in x, meters
+y_jupiter = 0.0             # initial position in y, meters
+vx_jupiter = 0.0            # initial velocity in x, meters/second
+vy_jupiter = 13070.0        # initial velocity in y, meters/second
 
-t_span = 31558118.4 * 11.86  # 11.86 years in seconds (jupiter year)
-dt = 86400  # one day in seconds
+t_span = 31558118.4 * 11.86     # 11.86 years in seconds (jupiter year)
+dt = 60 * 60                    # one day in seconds
 n_steps = int(t_span / dt)
 
 # arrays to store the positions
@@ -41,8 +38,8 @@ y_jupiter_current = y_jupiter
 for i in range(n_steps):
     # update earth position and velocity
     r_earth = np.sqrt(x_earth_current**2 + y_earth_current**2)
-    ax_earth = -G * m_sun * x_earth_current / r_earth**3
-    ay_earth = -G * m_sun * y_earth_current / r_earth**3
+    ax_earth = -vals.G * vals.m_sun * x_earth_current / r_earth**3
+    ay_earth = -vals.G * vals.m_sun * y_earth_current / r_earth**3
     vx_earth_current += ax_earth * dt
     vy_earth_current += ay_earth * dt
     x_earth_current += vx_earth_current * dt
@@ -52,8 +49,8 @@ for i in range(n_steps):
 
     # update jupiter position and velocity
     r_jupiter = np.sqrt(x_jupiter_current**2 + y_jupiter_current**2)
-    ax_jupiter = -G * m_sun * x_jupiter_current / r_jupiter**3
-    ay_jupiter = -G * m_sun * y_jupiter_current / r_jupiter**3
+    ax_jupiter = -vals.G * vals.m_sun * x_jupiter_current / r_jupiter**3
+    ay_jupiter = -vals.G * vals.m_sun * y_jupiter_current / r_jupiter**3
     vx_jupiter_current += ax_jupiter * dt
     vy_jupiter_current += ay_jupiter * dt
     x_jupiter_current += vx_jupiter_current * dt

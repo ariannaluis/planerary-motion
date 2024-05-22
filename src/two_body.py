@@ -1,20 +1,21 @@
+import data.initial_vals as vals
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
-G = 6.67430e-11  # gravitational constant, m^3 kg^-1 s^-2
-m_sun = 1.989e30  # mass of the Sun, kg
-m_earth = 5.972e24  # mass of the earth, kg
+G = 6.67430e-11             # gravitational constant, m^3 kg^-1 s^-2
+m_sun = 1.989e30            # mass of the Sun, kg
+m_earth = 5.972e24          # mass of the earth, kg
 
 # initial conditions for earth
-x_earth = 147095000000.0  # initial position in x, meters
-y_earth = 0.0  #iInitial position in y, meters
-vx_earth = 0.0  # initial velocity in x, meters/second
-vy_earth = 30286.4028  # initial velocity in y, meters/second
+x_earth = 147095000000.0    # initial position in x, meters
+y_earth = 0.0               #initial position in y, meters
+vx_earth = 0.0              # initial velocity in x, meters/second
+vy_earth = 30286.4028       # initial velocity in y, meters/second
 
 # simulation parameters
-t_span = 31558149.8  # one year in seconds
-dt = 86400  # one day in seconds
+t_span = 31558149.8         # one year in seconds
+dt = 60 * 60                 # one day in seconds
 n_steps = int(t_span / dt)
 
 # arrays to store the positions and velocities
