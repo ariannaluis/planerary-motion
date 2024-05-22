@@ -10,10 +10,10 @@ m_earth = 5.972e24  # mass of the earth, kg
 x_earth = 147095000000.0  # initial position in x, meters
 y_earth = 0.0  #iInitial position in y, meters
 vx_earth = 0.0  # initial velocity in x, meters/second
-vy_earth = 30286.40277858803  # initial velocity in y, meters/second
+vy_earth = 30286.4028  # initial velocity in y, meters/second
 
 # simulation parameters
-t_span = 31558118.4  # one year in seconds
+t_span = 31558149.8  # one year in seconds
 dt = 86400  # one day in seconds
 n_steps = int(t_span / dt)
 
