@@ -38,23 +38,34 @@ y_jupiter_current = y_jupiter
 for i in range(n_steps):
     # update earth position and velocity
     r_earth = np.sqrt(x_earth_current**2 + y_earth_current**2)
-    ax_earth = -vals.G * vals.m_sun * x_earth_current / r_earth**3
-    ay_earth = -vals.G * vals.m_sun * y_earth_current / r_earth**3
+    r_jupiter = np.sqrt(x_jupiter_current**2 + y_jupiter_current**2)
+    r_earth_jupiter = np.sqrt((x_jupiter_current - x_earth_current)**2 + (y_jupiter_current - y_earth_current)**2)
+
+    ax_earth = -vals.G * vals.m_sun * x_earth_current / r_earth**3 + vals.G * vals.m_jupiter * \
+               (x_jupiter_current - x_earth_current) / r_earth_jupiter**3
+    ay_earth = -vals.G * vals.m_sun * y_earth_current / r_earth**3 + vals.G * vals.m_jupiter * \
+               (y_jupiter_current - y_earth_current) / r_earth_jupiter**3
+
     vx_earth_current += ax_earth * dt
     vy_earth_current += ay_earth * dt
+
     x_earth_current += vx_earth_current * dt
     y_earth_current += vy_earth_current * dt
+
     x_positions_earth[i] = x_earth_current
     y_positions_earth[i] = y_earth_current
 
     # update jupiter position and velocity
-    r_jupiter = np.sqrt(x_jupiter_current**2 + y_jupiter_current**2)
-    ax_jupiter = -vals.G * vals.m_sun * x_jupiter_current / r_jupiter**3
-    ay_jupiter = -vals.G * vals.m_sun * y_jupiter_current / r_jupiter**3
+
+    ax_jupiter = -vals.G * vals.m_sun * x_jupiter_current / r_jupiter**3 + vals.G * vals.m_earth * (x_earth_current - x_jupiter_current) / r_earth_jupiter**3
+    ay_jupiter = -vals.G * vals.m_sun * y_jupiter_current / r_jupiter**3 + vals.G * vals.m_earth * (y_earth_current - y_jupiter_current) / r_earth_jupiter**3
+
     vx_jupiter_current += ax_jupiter * dt
     vy_jupiter_current += ay_jupiter * dt
+
     x_jupiter_current += vx_jupiter_current * dt
     y_jupiter_current += vy_jupiter_current * dt
+
     x_positions_jupiter[i] = x_jupiter_current
     y_positions_jupiter[i] = y_jupiter_current
 
@@ -67,7 +78,7 @@ ax1.plot(np.linspace(0, t_span, n_steps), y_positions_earth, label='y_earth')
 ax1.set_xlabel('Time (s)')
 ax1.set_ylabel('Position (m)')
 ax1.legend()
-ax1.set_title('Position vs Time for Earth')
+ax1.set_title('Position vs Time for Earth and Jupiter')
 ax1.grid()
 
 # position vs time for jupiter
@@ -78,7 +89,7 @@ ax1.legend()
 # orbit trace
 ax2.plot(x_positions_earth, y_positions_earth, label='Earth')
 ax2.plot(x_positions_jupiter, y_positions_jupiter, label='Jupiter', linestyle='--')
-ax2.plot(0, 0, 'yo', label='Sun')  # plotting sun at origin
+ax2.plot(0, 0, 'yo', label='Sun')  # plotting sun at the origin
 ax2.set_xlabel('X Position (m)')
 ax2.set_ylabel('Y Position (m)')
 ax2.legend()
