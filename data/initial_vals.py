@@ -13,10 +13,10 @@ earth_semi_major = (earth_perihelion + earth_aphelion) / 2   # semi-major axis o
 
 earth_period = 365.256 * 24 * 3600         # period of the Earth, seconds
 
-x_earth = 0.0           # TODO
-y_earth = 0.0           # TODO
-vx_earth = 0            # TODO
-vy_earth = 0.0          # TODO
+x_earth = earth_perihelion
+y_earth = 0.0
+vx_earth = 0.0
+vy_earth = np.sqrt(G * m_sun * ((2 / earth_perihelion) - (1 / earth_semi_major)))
 
 
 # JUPITER
@@ -28,9 +28,9 @@ jupiter_semi_major = (jupiter_perihelion + jupiter_perihelion) / 2  # semi-major
 
 jupiter_period = 4332.589 * 24 * 3600        # period of Jupiter, seconds
 
-x_jupiter = 0.0         # TODO
-y_jupiter = 0.0         # TODO
-vx_jupiter = 0.0        # TODO
-vy_jupiter = 0.0        # TODO
+x_jupiter = jupiter_perihelion
+y_jupiter = 0.0
+vx_jupiter = 0.0
+vy_jupiter = np.sqrt(G * m_sun * ((2 / jupiter_perihelion) - (1 / jupiter_semi_major)))
 
 
