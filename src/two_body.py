@@ -2,16 +2,11 @@ import data.initial_vals as vals
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Constants
-G = 6.67430e-11             # gravitational constant, m^3 kg^-1 s^-2
-m_sun = 1.989e30            # mass of the Sun, kg
-m_earth = 5.972e24          # mass of the earth, kg
-
 # initial conditions for earth
-x_earth = 147095000000.0    # initial position in x, meters
+x_earth = vals.earth_perihelion    # initial position in x, meters
 y_earth = 0.0               #initial position in y, meters
 vx_earth = 0.0              # initial velocity in x, meters/second
-vy_earth = 30286.4028       # initial velocity in y, meters/second
+vy_earth = np.sqrt(vals.G * vals.m_sun * ((2/vals.earth_perihelion) - (1 / vals.earth_semi_major)))
 
 # simulation parameters
 t_span = 31558149.8         # one year in seconds
@@ -29,8 +24,8 @@ y = y_earth
 # euler's method for integration
 for i in range(n_steps):
     r = np.sqrt(x**2 + y**2)
-    ax = -G * m_sun * x / r**3
-    ay = -G * m_sun * y / r**3
+    ax = -vals.G * vals.m_sun * x / r**3
+    ay = -vals.G * vals.m_sun * y / r**3
     vx += ax * dt
     vy += ay * dt
     x += vx * dt
